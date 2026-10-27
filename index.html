@@ -1,1 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday! 🎂</title>
 
+  <!-- Google Fonts: 手寫風格字體 Single Day 與內文溫和字體 Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500&family=Single+Day&display=swap" rel="stylesheet">
+
+  <!-- 引入 Canvas Confetti 慶祝彩帶動效 -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* 全域風格：大地暖色調、手機優先 */
+    :root {
+      --bg-color: #f7f4ef;         /* 溫暖米白背景 */
+      --card-bg: #ffffff;         /* 純白卡片 */
+      --text-main: #4a3b32;       /* 溫和深棕字體 */
+      --text-muted: #8c7a6b;      /* 柔和淺棕字體 */
+      --accent-color: #d9826c;    /* 暖暖珊瑚粉色 */
+      --error-color: #c95b5b;     /* 溫和紅色 */
+      --shadow-color: rgba(74, 59, 50, 0.08);
+      --font-handwriting: 'Single Day', cursive, sans-serif;
+      --font-body: 'Noto Sans TC', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex
