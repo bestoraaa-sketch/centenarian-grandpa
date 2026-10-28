@@ -232,7 +232,7 @@
   <div class="popup-overlay" id="popupOverlay">
     <div class="popup-card" id="popupCard">
       <div class="popup-icon">🔒</div>
-      <p class="popup-hint">Please try to input something...</p>
+      <p class="popup-hint" id="popupHint">Try to input something...</p>
       
       <form onsubmit="checkPassword(event)">
         <input 
@@ -243,7 +243,7 @@
           autocomplete="off"
           autofocus
         >
-        <button type="submit" class="submit-btn">Unlock 🔑</button>
+        <button type="submit" class="submit-btn" id="submitBtn">Unlock 🔑</button>
       </form>
       
       <p class="error-msg" id="errorMsg"></p>
@@ -278,14 +278,45 @@
   </main>
 
   <script>
+    // 四種完整語言包（提示、輸入框提示、按鈕文字、錯誤訊息）
+    const languagePacks = [
+      {
+        hint: "Try to input something...",
+        placeholder: "Enter password",
+        button: "Unlock 🔑",
+        error: "Incorrect password, try again!"
+      },
+      {
+        hint: "何か入力してみてください...",
+        placeholder: "パスワードを入力",
+        button: "解除 🔑",
+        error: "パスワードが違います。もう一度お試しください！"
+      },
+      {
+        hint: "무언가를 입력해 보세요...",
+        placeholder: "비밀번호 입력",
+        button: "잠금해제 🔑",
+        error: "비밀번호가 올바르지 않습니다. 다시 시도해 주세요!"
+      },
+      {
+        hint: "試試輸入一些字...",
+        placeholder: "輸入密碼",
+        button: "解鎖 🔑",
+        error: "密碼不正確，再試試看吧！"
+      }
+    ];
+
     function checkPassword(event) {
       event.preventDefault(); // 阻止表單預設送出動作
       
-      const inputVal = document.getElementById('pwdInput').value;
+      const pwdInput = document.getElementById('pwdInput');
+      const inputVal = pwdInput.value;
       const errorMsg = document.getElementById('errorMsg');
       const popupCard = document.getElementById('popupCard');
       const popupOverlay = document.getElementById('popupOverlay');
       const protectedContent = document.getElementById('protectedContent');
+      const popupHint = document.getElementById('popupHint');
+      const submitBtn = document.getElementById('submitBtn');
 
       // 檢查密碼（密碼設定為：7）
       if (inputVal === '7') {
@@ -303,16 +334,23 @@
           colors: ['#d9826c', '#e0a96d', '#8c7a6b', '#f7f4ef']
         });
       } else {
-        // 密碼錯誤處理
-        errorMsg.textContent = '密碼不正確，再試試看吧！';
+        // 隨機抽選一整組語言包
+        const randomPack = languagePacks[Math.floor(Math.random() * languagePacks.length)];
+        
+        // 更新整組介面文字
+        popupHint.textContent = randomPack.hint;
+        pwdInput.placeholder = randomPack.placeholder;
+        submitBtn.textContent = randomPack.button;
+        errorMsg.textContent = randomPack.error;
         
         // 觸發震動效果
         popupCard.classList.remove('shake');
         void popupCard.offsetWidth; // 重置動畫
         popupCard.classList.add('shake');
         
-        // 清空輸入框
-        document.getElementById('pwdInput').value = '';
+        // 清空輸入框並聚焦
+        pwdInput.value = '';
+        pwdInput.focus();
       }
     }
   </script>
