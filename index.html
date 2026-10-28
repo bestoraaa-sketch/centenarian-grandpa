@@ -334,8 +334,14 @@
           colors: ['#d9826c', '#e0a96d', '#8c7a6b', '#f7f4ef']
         });
       } else {
-        // 隨機抽選一整組語言包
-        const randomPack = languagePacks[Math.floor(Math.random() * languagePacks.length)];
+        // 保證每次錯誤都會切換到不同的語言
+let randomIndex;
+do {
+  randomIndex = Math.floor(Math.random() * languagePacks.length);
+} while (randomIndex === window.lastLangIndex && languagePacks.length > 1);
+window.lastLangIndex = randomIndex;
+
+const randomPack = languagePacks[randomIndex];
         
         // 更新整組介面文字
         popupHint.textContent = randomPack.hint;
