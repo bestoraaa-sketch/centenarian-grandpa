@@ -153,7 +153,7 @@
       text-align: left;
     }
 
-    /* ===== POP-UP 密碼彈窗 & 吐槽彈窗 ===== */
+    /* ===== POP-UP 彈窗 ===== */
     .popup-overlay {
       position: fixed;
       top: 0;
@@ -246,7 +246,7 @@
 </head>
 <body>
 
-  <!-- 第一層：密碼驗證彈窗 -->
+  <!-- 密碼驗證彈窗 -->
   <div class="popup-overlay" id="passwordPopup">
     <div class="popup-card" id="popupCard">
       <div class="popup-icon">🔒</div>
@@ -268,7 +268,7 @@
     </div>
   </div>
 
-  <!-- 第二層：趣味吐槽彈窗（三次錯誤後觸發） -->
+  <!-- 選擇題三次錯誤的吐槽彈窗 -->
   <div class="popup-overlay hidden" id="roastPopup">
     <div class="popup-card">
       <div class="popup-icon">💥</div>
@@ -281,12 +281,12 @@
 
   <!-- ===== 頁面 1：第一張照片 (a7K2mP9xQ4.jpeg) ===== -->
   <main class="page-section" id="page1">
-    <div class="card-container" id="cardContainer1">
+    <div class="card-container">
       <div class="polaroid-frame">
-        <img src="a7K2mP9xQ4.jpeg" alt="Birthday Photo 1" class="polaroid-img">
+        <img src="a7K2mP9xQ4.jpeg" alt="Photo 1" class="polaroid-img">
       </div>
       <h1 class="birthday-title">Happy Birthday!</h1>
-      <button class="action-btn" onclick="goToPage2()">準備好接受考驗了嗎？ ➔</button>
+      <button class="action-btn" onclick="goToPage(2)">準備好接受考驗了嗎？ ➔</button>
     </div>
   </main>
 
@@ -310,7 +310,40 @@
   <main class="page-section" id="page3">
     <div class="card-container">
       <div class="polaroid-frame">
-        <img src="R8kM2xQ7nP.jpeg" alt="Birthday Photo 2" class="polaroid-img">
+        <img src="R8kM2xQ7nP.jpeg" alt="Photo 2" class="polaroid-img">
+      </div>
+      <button class="action-btn" onclick="goToPage(4)">下一步 ➔</button>
+    </div>
+  </main>
+
+
+  <!-- ===== 頁面 4：第三張照片 (K7mQ2xN9pR.jpeg) ===== -->
+  <main class="page-section" id="page4">
+    <div class="card-container">
+      <div class="polaroid-frame">
+        <img src="K7mQ2xN9pR.jpeg" alt="Photo 3" class="polaroid-img">
+      </div>
+      <button class="action-btn" onclick="goToPage(5)">下一步 ➔</button>
+    </div>
+  </main>
+
+
+  <!-- ===== 頁面 5：第四張照片 (vT4L8qW1nC.jpeg) ===== -->
+  <main class="page-section" id="page5">
+    <div class="card-container">
+      <div class="polaroid-frame">
+        <img src="vT4L8qW1nC.jpeg" alt="Photo 4" class="polaroid-img">
+      </div>
+      <button class="action-btn" onclick="goToPage(6)">下一步 ➔</button>
+    </div>
+  </main>
+
+
+  <!-- ===== 頁面 6：第五張照片 / 完結 (P3zM7kX5rD.jpeg) ===== -->
+  <main class="page-section" id="page6">
+    <div class="card-container">
+      <div class="polaroid-frame">
+        <img src="P3zM7kX5rD.jpeg" alt="Photo 5" class="polaroid-img">
       </div>
       <h1 class="birthday-title">You made it! 🎉</h1>
     </div>
@@ -328,6 +361,15 @@
 
     let wrongCount = 0; // 記錄選擇題錯誤次數
 
+    // 通用頁面跳轉函數
+    function goToPage(pageNum) {
+      document.querySelectorAll('.page-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById('page' + pageNum).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     // 1. 檢查第一頁密碼
     function checkPassword(event) {
       event.preventDefault();
@@ -341,7 +383,7 @@
 
       if (inputVal === '7') {
         passwordPopup.classList.add('hidden');
-        document.getElementById('page1').classList.add('active');
+        goToPage(1);
 
         confetti({
           particleCount: 80,
@@ -364,21 +406,14 @@
       }
     }
 
-    // 2. 從第一頁跳轉到第二頁選擇題
-    function goToPage2() {
-      document.getElementById('page1').classList.remove('active');
-      document.getElementById('page2').classList.add('active');
-    }
-
-    // 3. 處理選擇題點擊邏輯
+    // 2. 處理選擇題點擊邏輯
     function handleQuizAnswer(isCorrect) {
       const cardContainer2 = document.getElementById('cardContainer2');
       const quizErrorMsg = document.getElementById('quizErrorMsg');
 
       if (isCorrect) {
-        // 答對了：直接進第三頁 + 撒彩帶
-        document.getElementById('page2').classList.remove('active');
-        document.getElementById('page3').classList.add('active');
+        // 答對了：進到下一頁 (Page 3) + 撒彩帶
+        goToPage(3);
 
         confetti({
           particleCount: 100,
@@ -387,7 +422,6 @@
           colors: ['#d9826c', '#e0a96d', '#8c7a6b', '#f7f4ef']
         });
       } else {
-        // 答錯了
         wrongCount++;
 
         if (wrongCount >= 3) {
@@ -398,19 +432,17 @@
 
           setTimeout(() => {
             document.getElementById('roastPopup').classList.remove('hidden');
-          }, 400); // 等紅光閃完後跳彈窗
+          }, 400);
         } else {
-          // 還沒滿 3 次：顯示提示
           quizErrorMsg.textContent = `哎呀選錯囉！還剩 ${3 - wrongCount} 次機會～`;
         }
       }
     }
 
-    // 4. 點擊吐槽彈窗的確定按鈕後，關閉彈窗並切換到第三張圖
+    // 3. 點擊吐槽彈窗的確定按鈕後，關閉彈窗並切換到 Page 3
     function closeRoastAndNext() {
       document.getElementById('roastPopup').classList.add('hidden');
-      document.getElementById('page2').classList.remove('active');
-      document.getElementById('page3').classList.add('active');
+      goToPage(3);
 
       confetti({
         particleCount: 80,
