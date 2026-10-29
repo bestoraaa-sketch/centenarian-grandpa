@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Happy Birthday! 🎂</title>
 
-  <!-- Google Fonts: 手寫風格字體 Single Day 與內文溫和字體 Noto Sans TC -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500&family=Single+Day&display=swap" rel="stylesheet">
@@ -14,14 +14,13 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
-    /* 全域風格：大地暖色調、手機優先 */
     :root {
-      --bg-color: #f7f4ef;         /* 溫暖米白背景 */
-      --card-bg: #ffffff;         /* 純白卡片 */
-      --text-main: #4a3b32;       /* 溫和深棕字體 */
-      --text-muted: #8c7a6b;      /* 柔和淺棕字體 */
-      --accent-color: #d9826c;    /* 暖暖珊瑚粉色 */
-      --error-color: #c95b5b;     /* 溫和紅色 */
+      --bg-color: #f7f4ef;
+      --card-bg: #ffffff;
+      --text-main: #4a3b32;
+      --text-muted: #8c7a6b;
+      --accent-color: #d9826c;
+      --error-color: #c95b5b;
       --shadow-color: rgba(74, 59, 50, 0.08);
       --font-handwriting: 'Single Day', cursive, sans-serif;
       --font-body: 'Noto Sans TC', sans-serif;
@@ -46,85 +45,115 @@
       overflow-x: hidden;
     }
 
-    /* ===== 解鎖前隱藏卡片內容 ===== */
-    .protected-content {
-      display: none; /* 密碼驗證前隱藏 */
+    /* 頁面切換控制 */
+    .page-section {
+      display: none;
       width: 100%;
       max-width: 420px;
-      animation: fadeIn 0.8s ease forwards;
+      animation: fadeIn 0.6s ease forwards;
+    }
+
+    .page-section.active {
+      display: block;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(15px); }
+      from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* 主要卡片容器 */
+    /* 卡片容器 */
     .card-container {
       background: var(--card-bg);
       border-radius: 20px;
       padding: 28px 24px;
       box-shadow: 0 10px 30px var(--shadow-color);
       text-align: center;
+      position: relative;
+      transition: box-shadow 0.3s ease;
     }
 
-/* 拍立得風格相框 */
+    /* 圖片樣式 (不裁切、高畫質) */
     .polaroid-frame {
       background: #faf8f5;
       padding: 12px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       border: 1px solid #eae5dd;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
     .polaroid-img {
       width: 100%;
-      height: auto;       /* 自動根據圖片比例調整高度，絕不裁切 */
-      display: block;     /* 避免圖片下方產生微小空白間隙 */
+      height: auto;
+      display: block;
       border-radius: 8px;
     }
 
-    .polaroid-caption {
-      font-family: var(--font-handwriting);
-      font-size: 1.3rem;
-      color: var(--text-muted);
-      margin-top: 10px;
-    }
-
-    /* 標題與內文 */
     .birthday-title {
       font-family: var(--font-handwriting);
       font-size: 2.2rem;
       color: var(--text-main);
-      margin-bottom: 8px;
+      margin-bottom: 16px;
     }
 
-    .message-box {
-      background: #faf7f2;
-      border-radius: 14px;
-      padding: 20px 18px;
+    /* 按鈕樣式 */
+    .action-btn {
+      width: 100%;
+      background-color: var(--accent-color);
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      font-size: 1.05rem;
+      font-family: var(--font-handwriting);
+      letter-spacing: 1px;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(217, 130, 108, 0.25);
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      margin-top: 10px;
+    }
+
+    .action-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* 選擇題選項按鈕 */
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
       margin-top: 16px;
-      border: 1px solid #ebdcd0;
       text-align: left;
     }
 
-    .message-text {
-      font-size: 0.98rem;
+    .quiz-btn {
+      background-color: #faf7f2;
+      border: 1.5px solid #ebdcd0;
       color: var(--text-main);
-      white-space: pre-line;
-      line-height: 1.8;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.98rem;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
-    .signature {
-      font-family: var(--font-handwriting);
-      font-size: 1.2rem;
-      text-align: right;
-      margin-top: 16px;
-      color: var(--accent-color);
+    .quiz-btn:hover {
+      background-color: #f2ebd9;
+      border-color: var(--accent-color);
     }
 
-    /* ===== POP-UP 密碼彈窗樣式 ===== */
+    .quiz-question {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      text-align: left;
+    }
+
+    /* ===== POP-UP 密碼彈窗 & 吐槽彈窗 ===== */
     .popup-overlay {
       position: fixed;
       top: 0;
@@ -132,7 +161,7 @@
       width: 100%;
       height: 100%;
       background: rgba(247, 244, 239, 0.85);
-      backdrop-filter: blur(8px); /* 背景模糊效果 */
+      backdrop-filter: blur(8px);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -186,26 +215,6 @@
       border-color: var(--accent-color);
     }
 
-    .submit-btn {
-      width: 100%;
-      background-color: var(--accent-color);
-      color: #ffffff;
-      border: none;
-      padding: 12px;
-      margin-top: 14px;
-      font-size: 1.05rem;
-      font-family: var(--font-handwriting);
-      letter-spacing: 1px;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(217, 130, 108, 0.25);
-      transition: background-color 0.2s ease, transform 0.1s ease;
-    }
-
-    .submit-btn:active {
-      transform: scale(0.98);
-    }
-
     .error-msg {
       color: var(--error-color);
       font-size: 0.85rem;
@@ -213,7 +222,17 @@
       min-height: 20px;
     }
 
-    /* 輸入錯誤時的抖動動畫 */
+    /* 遊戲受擊紅光閃爍特效 */
+    .hit-flash {
+      animation: hitFlashAnim 0.4s ease-in-out 2;
+    }
+
+    @keyframes hitFlashAnim {
+      0%, 100% { background-color: var(--card-bg); border-color: #eae5dd; }
+      50% { background-color: #fde8e8; border-color: var(--error-color); }
+    }
+
+    /* 震動特效 */
     .shake {
       animation: shake 0.3s ease-in-out;
     }
@@ -227,8 +246,8 @@
 </head>
 <body>
 
-  <!-- POP-UP 密碼驗證彈窗 -->
-  <div class="popup-overlay" id="popupOverlay">
+  <!-- 第一層：密碼驗證彈窗 -->
+  <div class="popup-overlay" id="passwordPopup">
     <div class="popup-card" id="popupCard">
       <div class="popup-icon">🔒</div>
       <p class="popup-hint" id="popupHint">Try to input something...</p>
@@ -242,75 +261,125 @@
           autocomplete="off"
           autofocus
         >
-        <button type="submit" class="submit-btn" id="submitBtn">Unlock 🔑</button>
+        <button type="submit" class="action-btn" id="submitBtn">Unlock 🔑</button>
       </form>
       
       <p class="error-msg" id="errorMsg"></p>
     </div>
   </div>
 
-  <!-- 受保護的卡片主要內容（密碼正確後顯示） -->
-  <main class="protected-content" id="protectedContent">
-    <div class="card-container">
-      <!-- 拍立得照片區 -->
-      <div class="polaroid-frame">
-        <img src="a7K2mP9xQ4.jpeg" alt="Birthday Photo" class="polaroid-img">
-      </div>
+  <!-- 第二層：趣味吐槽彈窗（三次錯誤後觸發） -->
+  <div class="popup-overlay hidden" id="roastPopup">
+    <div class="popup-card">
+      <div class="popup-icon">💥</div>
+      <p class="popup-hint" style="color: var(--error-color);">哎呀！連續錯 3 次！</p>
+      <p style="font-size: 0.95rem; margin-bottom: 20px; color: var(--text-main);">系統判定你對壽星很不熟，觸發防禦機制！自動帶你進入下一張圖～</p>
+      <button class="action-btn" onclick="closeRoastAndNext()">知道了 ➔</button>
+    </div>
+  </div>
 
+
+  <!-- ===== 頁面 1：第一張照片 (a7K2mP9xQ4.jpeg) ===== -->
+  <main class="page-section" id="page1">
+    <div class="card-container" id="cardContainer1">
+      <div class="polaroid-frame">
+        <img src="a7K2mP9xQ4.jpeg" alt="Birthday Photo 1" class="polaroid-img">
+      </div>
       <h1 class="birthday-title">Happy Birthday!</h1>
+      <button class="action-btn" onclick="goToPage2()">準備好接受考驗了嗎？ ➔</button>
     </div>
   </main>
 
+
+  <!-- ===== 頁面 2：選擇題闖關卡 ===== -->
+  <main class="page-section" id="page2">
+    <div class="card-container" id="cardContainer2">
+      <p class="quiz-question">【佔位假題目】請問壽星最喜歡以下哪一件事？</p>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="handleQuizAnswer(false)">A. 選項範例一：每天喝兩杯奶茶</button>
+        <button class="quiz-btn" onclick="handleQuizAnswer(false)">B. 選項範例二：深夜滑手機笑出聲</button>
+        <button class="quiz-btn" onclick="handleQuizAnswer(true)">C. 選項範例三：這題是正確答案（點我過關）</button>
+        <button class="quiz-btn" onclick="handleQuizAnswer(false)">D. 選項範例四：以上皆是</button>
+      </div>
+      <p class="error-msg" id="quizErrorMsg" style="text-align: center; margin-top: 12px;"></p>
+    </div>
+  </main>
+
+
+  <!-- ===== 頁面 3：第二張照片 (R8kM2xQ7nP.jpeg) ===== -->
+  <main class="page-section" id="page3">
+    <div class="card-container">
+      <div class="polaroid-frame">
+        <img src="R8kM2xQ7nP.jpeg" alt="Birthday Photo 2" class="polaroid-img">
+      </div>
+      <h1 class="birthday-title">You made it! 🎉</h1>
+    </div>
+  </main>
+
+
   <script>
-    // 四種完整語言包（提示、輸入框提示、按鈕文字、錯誤訊息）
+    // 密碼彈窗多國語言包
     const languagePacks = [
-      {
-        hint: "Try to input something...",
-        placeholder: "Enter password",
-        button: "Unlock 🔑",
-        error: "Incorrect password, try again!"
-      },
-      {
-        hint: "何か入力してみてください...",
-        placeholder: "パスワードを入力",
-        button: "解除 🔑",
-        error: "パスワードが違います。もう一度お試しください！"
-      },
-      {
-        hint: "무언가를 입력해 보세요...",
-        placeholder: "비밀번호 입력",
-        button: "잠금해제 🔑",
-        error: "비밀번호가 올바르지 않습니다. 다시 시도해 주세요!"
-      },
-      {
-        hint: "試試輸入一些字...",
-        placeholder: "輸入密碼",
-        button: "解鎖 🔑",
-        error: "密碼不正確，再試試看吧！"
-      }
+      { hint: "Try to input something...", placeholder: "Enter password", button: "Unlock 🔑", error: "Incorrect password, try again!" },
+      { hint: "何か入力してみてください...", placeholder: "パスワードを入力", button: "解除 🔑", error: "パスワードが違います。もう一度お試しください！" },
+      { hint: "무언가를 입력해 보세요...", placeholder: "비밀번호 입력", button: "잠금해제 🔑", error: "비밀번호가 올바르지 않습니다. 다시 시도해 주세요!" },
+      { hint: "試試輸入一些字...", placeholder: "輸入密碼", button: "解鎖 🔑", error: "密碼不正確，再試試看吧！" }
     ];
 
+    let wrongCount = 0; // 記錄選擇題錯誤次數
+
+    // 1. 檢查第一頁密碼
     function checkPassword(event) {
-      event.preventDefault(); // 阻止表單預設送出動作
-      
+      event.preventDefault();
       const pwdInput = document.getElementById('pwdInput');
       const inputVal = pwdInput.value;
       const errorMsg = document.getElementById('errorMsg');
       const popupCard = document.getElementById('popupCard');
-      const popupOverlay = document.getElementById('popupOverlay');
-      const protectedContent = document.getElementById('protectedContent');
+      const passwordPopup = document.getElementById('passwordPopup');
       const popupHint = document.getElementById('popupHint');
       const submitBtn = document.getElementById('submitBtn');
 
-      // 檢查密碼（密碼設定為：7）
       if (inputVal === '7') {
-        // 隱藏彈窗
-        popupOverlay.classList.add('hidden');
-        
-        // 顯示卡片內容
-        protectedContent.style.display = 'block';
+        passwordPopup.classList.add('hidden');
+        document.getElementById('page1').classList.add('active');
 
-        // 觸發慶祝彩帶動效
+        confetti({
+          particleCount: 80,
+          spread: 60,
+          origin: { y: 0.6 },
+          colors: ['#d9826c', '#e0a96d', '#8c7a6b', '#f7f4ef']
+        });
+      } else {
+        const randomPack = languagePacks[Math.floor(Math.random() * languagePacks.length)];
+        popupHint.textContent = randomPack.hint;
+        pwdInput.placeholder = randomPack.placeholder;
+        submitBtn.textContent = randomPack.button;
+        errorMsg.textContent = randomPack.error;
+        
+        popupCard.classList.remove('shake');
+        void popupCard.offsetWidth;
+        popupCard.classList.add('shake');
+        pwdInput.value = '';
+        pwdInput.focus();
+      }
+    }
+
+    // 2. 從第一頁跳轉到第二頁選擇題
+    function goToPage2() {
+      document.getElementById('page1').classList.remove('active');
+      document.getElementById('page2').classList.add('active');
+    }
+
+    // 3. 處理選擇題點擊邏輯
+    function handleQuizAnswer(isCorrect) {
+      const cardContainer2 = document.getElementById('cardContainer2');
+      const quizErrorMsg = document.getElementById('quizErrorMsg');
+
+      if (isCorrect) {
+        // 答對了：直接進第三頁 + 撒彩帶
+        document.getElementById('page2').classList.remove('active');
+        document.getElementById('page3').classList.add('active');
+
         confetti({
           particleCount: 100,
           spread: 70,
@@ -318,30 +387,37 @@
           colors: ['#d9826c', '#e0a96d', '#8c7a6b', '#f7f4ef']
         });
       } else {
-        // 保證每次錯誤都會切換到不同的語言
-let randomIndex;
-do {
-  randomIndex = Math.floor(Math.random() * languagePacks.length);
-} while (randomIndex === window.lastLangIndex && languagePacks.length > 1);
-window.lastLangIndex = randomIndex;
+        // 答錯了
+        wrongCount++;
 
-const randomPack = languagePacks[randomIndex];
-        
-        // 更新整組介面文字
-        popupHint.textContent = randomPack.hint;
-        pwdInput.placeholder = randomPack.placeholder;
-        submitBtn.textContent = randomPack.button;
-        errorMsg.textContent = randomPack.error;
-        
-        // 觸發震動效果
-        popupCard.classList.remove('shake');
-        void popupCard.offsetWidth; // 重置動畫
-        popupCard.classList.add('shake');
-        
-        // 清空輸入框並聚焦
-        pwdInput.value = '';
-        pwdInput.focus();
+        if (wrongCount >= 3) {
+          // 錯滿 3 次：觸發打機受擊閃紅光，然後跳出吐槽彈窗
+          cardContainer2.classList.remove('hit-flash');
+          void cardContainer2.offsetWidth;
+          cardContainer2.classList.add('hit-flash');
+
+          setTimeout(() => {
+            document.getElementById('roastPopup').classList.remove('hidden');
+          }, 400); // 等紅光閃完後跳彈窗
+        } else {
+          // 還沒滿 3 次：顯示提示
+          quizErrorMsg.textContent = `哎呀選錯囉！還剩 ${3 - wrongCount} 次機會～`;
+        }
       }
+    }
+
+    // 4. 點擊吐槽彈窗的確定按鈕後，關閉彈窗並切換到第三張圖
+    function closeRoastAndNext() {
+      document.getElementById('roastPopup').classList.add('hidden');
+      document.getElementById('page2').classList.remove('active');
+      document.getElementById('page3').classList.add('active');
+
+      confetti({
+        particleCount: 80,
+        spread: 60,
+        origin: { y: 0.6 },
+        colors: ['#c95b5b', '#e0a96d', '#8c7a6b']
+      });
     }
   </script>
 </body>
